@@ -1,0 +1,7 @@
+auth:
+  api_id: 
+  api_hash: ""
+channels:
+  - -1001234567890
+various:
+  playBellSound: True
