@@ -27,20 +27,20 @@ python listen.py
 https://docs.telethon.dev/en/latest/basic/signing-in.html
 
 # How to get the channel number
-Got to https://web.telegram.org and sign in
-Open the channel you want to monitor
-In the link identify the string that starts with c and ends with _
-Example:
-```
-https://web.telegram.org/#/im?p=c1158879711_3707114065192498484
-```
-In this case it's c1158879711
-Remove the c and add -100 to it, like this:
+After completing the configuration of config.yml run the getchannelids.py script (python getchannelids.py)
+The groupid will have this format:
+
 ```
 -1001158879711
 ```
 
-This is it. You can add it to the config.yml now
+This is it. You can add it to the config.yml now.
+You can add more than one to the config.yml, just need to make sure the indent is correct. Example:
+```
+channels:
+  - -1001466115668
+  - -1001158879711
+```
 
 # Requirements
 asyncio, Telethon, pyyaml
