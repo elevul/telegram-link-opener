@@ -11,6 +11,7 @@ Use at own risk!
 pip install Telethon
 pip install asyncio
 pip install pyyaml
+pip install playsound
 
 ```
 3. Clone the repo using your favourite git application (I'm partial to Github Desktop for Windows users)
