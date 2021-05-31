@@ -44,7 +44,7 @@ channels:
 ```
 
 # Requirements
-asyncio, Telethon, pyyaml
+asyncio, Telethon, pyyaml, playsound
 
 # Operating Systems
 This was designed for and only tested on windows.
