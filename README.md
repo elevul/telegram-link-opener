@@ -1,6 +1,10 @@
 # Telegram link opener
 Very work in progress python app to automatically open telegram links in web browser
 
+
+# Known issues
+Due to limitations of the Telethon api the notification can be between 5 and 60 seconds late: https://github.com/LonamiWebs/Telethon/issues/237
+
 # Disclaimer
 Use at own risk!
 
