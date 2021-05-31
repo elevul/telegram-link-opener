@@ -7,6 +7,12 @@ from datetime import datetime
 import urllib.parse as urlparse
 from urllib.parse import parse_qs
 import yaml
+import os
+
+# Set current working directory to the script's root
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
 
 # Remember to use your own values from my.telegram.org and set them in the config.json file!
 with open("config.yml", "r") as ymlfile:
