@@ -17,3 +17,5 @@ client.start()
 for chat in client.get_dialogs():
     print('name:{0} ids:{1} is_user:{2} is_channel{3} is_group:{4}'.format(
         chat.name, chat.id, chat.is_user, chat.is_channel, chat.is_group))
+#Asking the user to press enter before closing the window
+input("Press enter to exit ;)")
