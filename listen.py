@@ -1,6 +1,6 @@
 from telethon import TelegramClient, events, sync
 import re
-import winsound
+from playsound import playsound
 import webbrowser
 import asyncio
 from datetime import datetime
@@ -66,7 +66,7 @@ async def check_urls(urls, channel_name):
                 webbrowser.open_new_tab(url)
                 print_time(f'Link opened from #{channel_name}: {url}')
             if playBellSound:
-                winsound.PlaySound('bell.wav', winsound.SND_FILENAME)
+                playsound('./bell.wav')
 
 async def get_last_msg(channelid):
     msg = await client.get_channel(channelid).history(limit=1).flatten()
