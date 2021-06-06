@@ -8,6 +8,7 @@ import urllib.parse as urlparse
 from urllib.parse import parse_qs
 import yaml
 import os
+import numpy as np
 
 # Set current working directory to the script's root
 abspath = os.path.abspath(__file__)
@@ -80,11 +81,22 @@ async def get_last_msg(channelid):
 
 @client.on(events.NewMessage(chats = myChannelIDList))
 async def my_event_handler(event):
-    #print(event)
-    urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', event.text if event.text else "")
-    for url in urls:
-        #print(url)
-        asyncio.ensure_future(check_urls(urls, GroupName))
+    print(event.peer_id)
+    peerid = str(event.peer_id)
+    if 'tg://unsafe_url' in event.text:
+        print_time('Notif from Bavarnold')
+        bvurls = re.findall('tg:\/\/unsafe_url?.*ldlc.com.*(PB\d*.html)', event.text if event.text else "")
+        bvurlsunique = (np.unique(bvurls))
+        for bvurl in bvurlsunique:
+            print_time(bvurl)
+            toopen = 'https://www.ldlc.com/fiche/' + bvurl
+            print_time(toopen)
+            asyncio.ensure_future(check_urls(bvurl, peerid))
+    else:
+        urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', event.text if event.text else "")
+        print_time('Notif from PartAlert')
+        for url in urls:
+            asyncio.ensure_future(check_urls(url, peerid))
 
 client.start()
 client.run_until_disconnected()
