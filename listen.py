@@ -95,8 +95,13 @@ async def my_event_handler(event):
     else:
         urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', event.text if event.text else "")
         print_time('Notif from PartAlert')
-        for url in urls:
-            asyncio.ensure_future(check_urls(url, peerid))
+        urlarraysize = len(urls)
+        if urlarraysize > 1:
+            for url in urls:
+                asyncio.ensure_future(check_urls(url, peerid))
+        else:
+            asyncio.ensure_future(check_urls(urls, peerid))
+
 
 client.start()
 client.run_until_disconnected()
