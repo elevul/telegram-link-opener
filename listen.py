@@ -87,12 +87,6 @@ async def my_event_handler(event):
     unsafeurls = re.findall('tg:\/\/unsafe_url\?url=((?:https?%3A%2F%2F)?(?:www\.)?(?:.+?\..+?)%2F.+)', event.text if event.text else "")
     ldlcurls = re.findall('tg:\/\/unsafe_url?.*ldlc.com.*(PB\d*.html)', event.text if event.text else "")
     toopen = []
-    print(urls)
-    print(unsafeurls)
-    print(ldlcurls)
-    print(type(urls))
-    print(type(unsafeurls))
-    print(type(ldlcurls))
     #Normal URLs
     if isinstance(urls, str):
         toopen.append(urls)
@@ -101,12 +95,14 @@ async def my_event_handler(event):
             toopen.append(url)
     #Unsafeurls
     if isinstance(unsafeurls, str):
-        cleanurl = unquote(unsafeurls)
-        toopen.append(cleanurl)
+        if 'ldlc.com' not in unsafeurls:
+            cleanurl = unquote(unsafeurls)
+            toopen.append(cleanurl)
     else:
         for unsafeurl in unsafeurls:
-            cleanurl = unquote(unsafeurl)
-            toopen.append(cleanurl)
+            if 'ldlc.com' not in unsafeurl:
+                cleanurl = unquote(unsafeurl)
+                toopen.append(cleanurl)
     #ldlcurls:
     if isinstance(ldlcurls, str):
         finalurl = 'https://www.ldlc.com/fiche/' + ldlcurls
@@ -115,11 +111,13 @@ async def my_event_handler(event):
         for ldlcurl in ldlcurls:
             finalurl = 'https://www.ldlc.com/fiche/' + ldlcurl
             toopen.append(finalurl)
+    #Removing Duplicates
+    noduplicates = np.unique(toopen).tolist()
     #final opening
-    if isinstance(toopen, str):
-        asyncio.ensure_future(check_urls(toopen, peerid))
+    if isinstance(noduplicates, str):
+        asyncio.ensure_future(check_urls(noduplicates, peerid))
     else:
-        for link in toopen:
+        for link in noduplicates:
             asyncio.ensure_future(check_urls(link, peerid))
 
 client.start()

@@ -2,3 +2,4 @@
 *.session
 config.yml
 partlisten.session
+partlisten.session-journal
