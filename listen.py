@@ -9,6 +9,7 @@ from urllib.parse import parse_qs
 import yaml
 import os
 import numpy as np
+from urllib.parse import unquote
 
 # Set current working directory to the script's root
 abspath = os.path.abspath(__file__)
@@ -83,24 +84,38 @@ async def get_last_msg(channelid):
 async def my_event_handler(event):
     print(event.peer_id)
     peerid = str(event.peer_id)
-    if 'tg://unsafe_url' in event.text:
-        print_time('Notif from Bavarnold')
-        bvurls = re.findall('tg:\/\/unsafe_url?.*ldlc.com.*(PB\d*.html)', event.text if event.text else "")
-        bvurlsunique = (np.unique(bvurls))
-        for bvurl in bvurlsunique:
-            print_time(bvurl)
-            toopen = 'https://www.ldlc.com/fiche/' + bvurl
-            print_time(toopen)
-            asyncio.ensure_future(check_urls(bvurl, peerid))
+    urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', event.text if event.text else "")
+    unsafeurls = re.findall('tg:\/\/unsafe_url\?url=((?:https?%3A%2F%2F)?(?:www\.)?(.+?\..+?)%2F.+)', event.text if event.text else "")
+    ldlcurls = re.findall('tg:\/\/unsafe_url?.*ldlc.com.*(PB\d*.html)', event.text if event.text else "")
+    toopen = []
+    #Normal URLs
+    if isinstance(urls, str):
+        toopen.append(urls)
     else:
-        urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', event.text if event.text else "")
-        print_time('Notif from PartAlert')
-        if type(urls) == str:
-            asyncio.ensure_future(check_urls(urls, peerid))
-        else:
-            for url in urls:
-                asyncio.ensure_future(check_urls(url, peerid))
-
+        for url in urls:
+            toopen.append(url)
+    #Unsafeurls
+    if isinstance(unsafeurls, str):
+        cleanurl = unquote(unsafeurls)
+        toopen.append(cleanurl)
+    else:
+        for unsafeurl in unsafeurls:
+            cleanurl = unquote(unsafeurl)
+            toopen.append(cleanurl)
+    #ldlcurls:
+    if isinstance(ldlcurls, str):
+        finalurl = 'https://www.ldlc.com/fiche/' + ldlcurls
+        toopen.append(finalurl)
+    else:
+        for ldlcurl in ldlcurls:
+            finalurl = 'https://www.ldlc.com/fiche/' + ldlcurl
+            toopen.append(finalurl)
+    #final opening
+    if isinstance(toopen, str):
+        asyncio.ensure_future(check_urls(toopen, peerid))
+    else:
+        for link in toopen:
+            asyncio.ensure_future(check_urls(link, peerid))
 
 client.start()
 client.run_until_disconnected()
