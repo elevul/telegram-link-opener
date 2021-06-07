@@ -61,20 +61,19 @@ def get_amazon_url(url):
     return url
 
 # Check for keywords and blacklisted words in message urls and open browser if conditions are met
-async def check_urls(urls, channel_name):
-    for url in urls:
-            # Check if url contains partalert.net. If true, direct amazon link will be built.
-            if "partalert.net" in url:
-                amazon_url = get_amazon_url(url)
-                # Enter path to your browser
-                webbrowser.open_new_tab(amazon_url)
-                print_time(f'Link opened from #{channel_name}: {amazon_url}')
-            else: 
-                # Enter path to your browser
-                webbrowser.open_new_tab(url)
-                print_time(f'Link opened from #{channel_name}: {url}')
-            if playBellSound:
-                playsound('./bell.wav')
+async def check_urls(url, channel_name):
+    # Check if url contains partalert.net. If true, direct amazon link will be built.
+    if "partalert.net" in url:
+        amazon_url = get_amazon_url(url)
+        # Enter path to your browser
+        webbrowser.open_new_tab(amazon_url)
+        print_time(f'Link opened from #{channel_name}: {amazon_url}')
+    else: 
+        # Enter path to your browser
+        webbrowser.open_new_tab(url)
+        print_time(f'Link opened from #{channel_name}: {url}')
+    if playBellSound:
+        playsound('./bell.wav')
 
 async def get_last_msg(channelid):
     msg = await client.get_channel(channelid).history(limit=1).flatten()
@@ -85,9 +84,15 @@ async def my_event_handler(event):
     print(event.peer_id)
     peerid = str(event.peer_id)
     urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', event.text if event.text else "")
-    unsafeurls = re.findall('tg:\/\/unsafe_url\?url=((?:https?%3A%2F%2F)?(?:www\.)?(.+?\..+?)%2F.+)', event.text if event.text else "")
+    unsafeurls = re.findall('tg:\/\/unsafe_url\?url=((?:https?%3A%2F%2F)?(?:www\.)?(?:.+?\..+?)%2F.+)', event.text if event.text else "")
     ldlcurls = re.findall('tg:\/\/unsafe_url?.*ldlc.com.*(PB\d*.html)', event.text if event.text else "")
     toopen = []
+    print(urls)
+    print(unsafeurls)
+    print(ldlcurls)
+    print(type(urls))
+    print(type(unsafeurls))
+    print(type(ldlcurls))
     #Normal URLs
     if isinstance(urls, str):
         toopen.append(urls)
