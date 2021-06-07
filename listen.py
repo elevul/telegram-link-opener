@@ -89,10 +89,12 @@ async def my_event_handler(event):
     toopen = []
     #Normal URLs
     if isinstance(urls, str):
-        toopen.append(urls)
+        if 'ldlc.com' not in urls:
+            toopen.append(urls)
     else:
         for url in urls:
-            toopen.append(url)
+            if 'ldlc.com' not in url:
+                toopen.append(url)
     #Unsafeurls
     if isinstance(unsafeurls, str):
         if 'ldlc.com' not in unsafeurls:
