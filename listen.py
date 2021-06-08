@@ -10,6 +10,8 @@ import yaml
 import os
 import numpy as np
 from urllib.parse import unquote
+from bs4 import BeautifulSoup
+import requests
 
 # Set current working directory to the script's root
 abspath = os.path.abspath(__file__)
@@ -41,33 +43,22 @@ def print_time(*content):
 
 # Function to build the amazon url, where partalert is redirecting to
 def get_amazon_url(url):
-    """
-    This function collects and returns an amazon link
-    that would be linked through the green button on the webpage.
-    :param url: An partalert.net link for an amazon product
-    :return: The extracted amazon link to the product
-    """
-
-    # Parse url to obtain query parameters
-    parsed = urlparse.urlparse(url)
-
-    country = parse_qs(parsed.query)['tld'][0]
-    prod_id = parse_qs(parsed.query)['asin'][0]
-    tag = parse_qs(parsed.query)['tag'][0]
-    smid = parse_qs(parsed.query)['smid'][0]
-
-    # Create full Amazon url
-    url = f"https://www.amazon{country}/dp/{prod_id}?{tag}&linkCode=ogi&th=1&psc=1&{smid}"
-    return url
+    r = requests.get(url)
+    soup = BeautifulSoup(r.content, "html.parser")
+    urls = []
+    for a in soup.find_all('a', href=True):
+        if 'partalert.net' not in a['href']:
+            urls.append(a['href'])
+    return urls
 
 # Check for keywords and blacklisted words in message urls and open browser if conditions are met
 async def check_urls(url, channel_name):
     # Check if url contains partalert.net. If true, direct amazon link will be built.
     if "partalert.net" in url:
-        amazon_url = get_amazon_url(url)
-        # Enter path to your browser
-        webbrowser.open_new_tab(amazon_url)
-        print_time(f'Link opened from #{channel_name}: {amazon_url}')
+        amazon_urls = get_amazon_url(url)
+        for amazon_url in amazon_urls:
+            webbrowser.open_new_tab(amazon_url)
+            print_time(f'Link opened from #{channel_name}: {amazon_url}')
     else: 
         # Enter path to your browser
         webbrowser.open_new_tab(url)
