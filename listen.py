@@ -41,42 +41,12 @@ def print_time(*content):
     date_time = now.strftime("%d/%m/%Y %H:%M:%S")
     print(f"[{date_time}] - [INFO] ", *content)
 
-# Function to build the amazon url, where partalert is redirecting to
-def get_amazon_url(url):
-    r = requests.get(url)
-    soup = BeautifulSoup(r.content, "html.parser")
-    urls = []
-    for a in soup.find_all('a', href=True):
-        if 'partalert.net' not in a['href']:
-            urls.append(a['href'])
-    return urls
-
-def get_bavarnoldurl(url):
-    r = requests.get(url)
-    soup = BeautifulSoup(r.content, "html.parser")
-    urls = []
-    for a in soup.find_all('a', href=True):
-        if 'https://www.awin1.com' in a['href']:
-            urls.append(a['href'])
-    return urls
-
 # Check for keywords and blacklisted words in message urls and open browser if conditions are met
 async def check_urls(url, channel_name):
     # Check if url contains partalert.net. If true, direct amazon link will be built.
-    if "partalert.net" in url:
-        amazon_urls = get_amazon_url(url)
-        for amazon_url in amazon_urls:
-            webbrowser.open_new_tab(amazon_url)
-            print_time(f'Link opened from #{channel_name}: {amazon_url}')
-    elif "cutt.ly" in url:
-        bavarnold_urls = get_bavarnoldurl(url)
-        for bavarnold_url in bavarnold_urls:
-            webbrowser.open_new_tab(bavarnold_url)
-            print_time(f'Link opened from #{channel_name}: {bavarnold_url}')
-    else: 
-        # Enter path to your browser
-        webbrowser.open_new_tab(url)
-        print_time(f'Link opened from #{channel_name}: {url}')
+    # Enter path to your browser
+    webbrowser.open_new_tab(url)
+    print_time(f'Link opened from #{channel_name}: {url}')
     if playBellSound:
         playsound('./bell.wav')
 
